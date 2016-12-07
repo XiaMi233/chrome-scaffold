@@ -4,7 +4,8 @@
   "description": "Chrome extension to detect tt",
   "main": "index.js",
   "scripts": {
-    "test": "server"
+    "start": "cross-env NODE_ENV=development babel-node %NODE_DEBUG_OPTION% -e \"require('./local_modules/start')\"",
+    "build": "cross-env NODE_ENV=production babel-node %NODE_DEBUG_OPTION% -e \"require('./local_modules/build')\""
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,33 @@
   "bugs": {
     "url": "https://github.com/kandamashiro/tt-watchter/issues"
   },
-  "homepage": "https://github.com/kandamashiro/tt-watchter#readme"
+  "homepage": "https://github.com/kandamashiro/tt-watchter#readme",
+  "dependencies": {
+    "lodash": "^4.17.2",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1"
+  },
+  "devDependencies": {
+    "assets-webpack-plugin": "^3.5.0",
+    "autoprefixer": "^6.5.3",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-plugin-lodash": "^3.2.10",
+    "babel-preset-es2015": "^6.18.0",
+    "cross-env": "^3.1.3",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.24.1",
+    "i18n-webpack-plugin": "^0.3.0",
+    "lodash-webpack-plugin": "^0.10.6",
+    "path": "^0.12.7",
+    "postcss": "^5.2.6",
+    "postcss-filter-gradient": "^0.2.4",
+    "postcss-opacity": "^4.0.0",
+    "postcss-pxtorem": "^3.3.1",
+    "postcss-unrgba": "^1.1.1",
+    "react-hot-loader": "^3.0.0-beta.6",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
+  }
 }

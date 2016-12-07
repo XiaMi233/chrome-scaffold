@@ -1,0 +1,217 @@
+import _ from 'lodash'
+import webpack from 'webpack'
+import path from 'path'
+
+import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
+import autoprefixer from 'autoprefixer'
+import opacity from 'postcss-opacity'
+import unrgba from 'postcss-unrgba'
+import gradient from 'postcss-filter-gradient'
+import AssetsPlugin from 'assets-webpack-plugin'
+import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+
+
+let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
+
+let appConfig = {
+  entry: {
+    'main': {
+      entry: ['./app/index']
+    }
+  },
+  commonChunks: {
+    'common': []
+  },
+  entries: {
+    index: {
+      title: 'test',
+      template: './app/entry/index.html',
+      // chunks: ['base', 'main', 'common']
+    }
+  },
+  output: {
+    path: 'main',
+    publicPath: '/'
+  },
+  resolve: {
+    alias: {
+    }
+  },
+  providePlugin: {
+  },
+  noParse: [
+  ],
+  port: 3000
+};
+
+function create() {
+  //==============entry================
+  let entry = _.reduce(appConfig.entry, function(entries, entryInfo, entryName) {
+    let entry = entryInfo.entry;
+    if (process.env.NODE_ENV === "development") {
+      entry = [
+        'react-hot-loader/patch',
+        'webpack-dev-server/client'
+      ].concat(entry);
+    }
+
+    entries[entryName] = entry;
+
+    return entries;
+  }, {});
+
+  //==============output================
+  let output;
+
+  output = {
+    path: path.join(__dirname, 'dist/' + appConfig.output.path)
+  };
+
+  if (process.env.NODE_ENV === "development") {
+
+    output.publicPath = 'http://localhost:' + appConfig.port + appConfig.output.publicPath;
+    output.filename = '[name].bundle.js';
+    output.chunkFilename = '[name].bundle.js';
+  } else {
+    //临时解决绝对路径在线上无法找到css中下级资源的问题
+    output.publicPath = '.' + appConfig.output.publicPath;
+    output.filename = '[name].[hash].bundle.js';
+    output.chunkFilename = '[name].[chunkhash].bundle.js';
+  }
+
+  //==============resolve================
+  let resolve = {
+    root: [
+      path.join(__dirname, 'src'),
+      path.join(__dirname, 'node_modules')
+    ],
+    extensions: ['', '.jsx', '.js', '.scss']
+  };
+
+  if (appConfig.resolve) {
+    resolve.alias = appConfig.resolve.alias;
+  }
+
+  let plugins = [
+    new LodashModuleReplacementPlugin
+  ];
+
+  if (appConfig.providePlugin) {
+    plugins.push(new webpack.ProvidePlugin(appConfig.providePlugin));
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    _.each(appConfig.commonChunks, function(commonChunk, name) {
+      plugins.push(new CommonsChunkPlugin({
+        name: name,
+        filename: name + '.js',
+        chunks: _.isEmpty(commonChunk) ? Infinity: commonChunk
+      }));
+    });
+    plugins.push(new webpack.HotModuleReplacementPlugin());
+  } else {
+    _.each(appConfig.commonChunks, function(commonChunk, name) {
+      plugins.push(new CommonsChunkPlugin({
+        name: name,
+        filename: name + '.[hash].js',
+        chunks: _.isEmpty(commonChunk) ? Infinity: commonChunk
+      }));
+    });
+    plugins.push(new ExtractTextPlugin('[name].[hash].styles.css'));
+    plugins.push(new AssetsPlugin());
+    plugins.push(new webpack.optimize.OccurrenceOrderPlugin);
+    plugins.push(new webpack.optimize.UglifyJsPlugin);
+  }
+
+  _.each(appConfig.entries, function(entryInfo, entryName) {
+    plugins.push(new HtmlWebpackPlugin({
+      title: entryInfo.title,
+      filename: entryName + '.html',
+      template: entryInfo.template,
+      chunks: entryInfo.chunks,
+      inject: 'body',
+      favicon: entryInfo.favicon,
+      resources : entryInfo.resources,
+      chunksSortMode: function(a, b) {
+        if (a.entry !== b.entry) {
+          return b.entry ? 1 : -1;
+        } else if (a.names[0] === 'base' || b.names[0] === 'base') {
+          return b.names[0] === 'base' ? 1 : -1;
+        } else {
+          return b.id - a.id;
+        }
+      }
+    }));
+  });
+
+  //==============module================
+  let module = {
+    loaders: [
+      {
+        test: /\.(jpg|gif)$/,
+        loader: 'url?limit=1024'
+      },
+      {
+        test: /\.png$/,
+        loaders: ['url?limit=1024!mimetype=image/png!./file.png']
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url?limit=10000&minetype=application/font-woff'
+      },
+      {
+        test: /\.(ttf|eot|svg|swf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file'
+      }
+    ]
+  };
+
+  if (process.env.NODE_ENV === "development") {
+    module.loaders.push({
+      test: /\.jsx?$/,
+      loaders: ['babel'],
+      include: [path.join(__dirname, 'app')]
+    });
+
+    module.loaders.push({
+      test: /\.css$/,
+      loaders: ['css', 'postcss']
+    });
+  } else {
+    module.loaders.push({
+      test: /\.css$/,
+      loader: ExtractTextPlugin.extract('style','css!postcss')
+    });
+  }
+
+  return {
+    devtool: process.env.NODE_ENV === "development" ? "eval" : false,
+    entry: entry,
+    output: output,
+    debug: process.env.NODE_ENV === "development",
+    externals: {
+    },
+    resolve: resolve || {},
+    noParse: appConfig.noParse || {},
+    plugins: plugins,
+    module: module,
+    postcss: function () {
+      return {
+        defaults: [
+          unrgba({
+            method: 'clone'
+          }),
+          gradient,
+          opacity,
+          autoprefixer({browsers: ['Chrome > 30','ie >= 8','> 1%']})
+        ]
+      };
+    },
+    port: appConfig.port
+  };
+}
+
+const webpackConfig = create();
+
+export default webpackConfig;
