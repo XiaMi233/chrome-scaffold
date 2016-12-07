@@ -1,25 +1,25 @@
 {
   "manifest_version": 2,
-  "name": "tt-watcher",
+  "name": "__MSG_appName__",
   "version": "1.0.0",
-  "default_locale": "zh-CN",
+  "default_locale": "zh_CN",
   "description": "Chrome extension to detect tt",
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png"
+    "16": "app/images/icon16.png",
+    "48": "app/images/icon48.png"
   },
-
   "browser_action": {
     "default_icon": {
-      "16": "images/icon16.png",
-      "24": "images/icon24.png",
-      "32": "images/icon32.png"
+      "16": "app/images/icon16.png",
+      "24": "app/images/icon24.png",
+      "32": "app/images/icon32.png"
     },
-    "default_title": "tt-watcher",
+    "default_title": "Google Mail",
     "default_popup": "popup.html"
   },
   "permissions": [
     "http://*/*",
     "https://*/*"
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

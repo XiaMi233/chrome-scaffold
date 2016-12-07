@@ -10,13 +10,14 @@ import gradient from 'postcss-filter-gradient'
 import AssetsPlugin from 'assets-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import WriteFilePlugin from 'write-file-webpack-plugin'
 
 
 let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
 let appConfig = {
   entry: {
-    'app': {
+    'index': {
       entry: ['./app/index']
     }
   },
@@ -24,10 +25,10 @@ let appConfig = {
     'common': []
   },
   entries: {
-    index: {
+    popup: {
       title: 'test',
       template: './entry/index.html',
-      // chunks: ['base', 'main', 'common']
+      chunks: ['index', 'common']
     }
   },
   output: {
@@ -36,6 +37,7 @@ let appConfig = {
   },
   resolve: {
     alias: {
+      'locales': '../_locales'
     }
   },
   providePlugin: {
@@ -51,8 +53,8 @@ function create() {
     let entry = entryInfo.entry;
     if (process.env.NODE_ENV === "development") {
       entry = [
-        'react-hot-loader/patch',
-        'webpack-dev-server/client'
+        // 'react-hot-loader/patch',
+        // 'webpack-dev-server/client'
       ].concat(entry);
     }
 
@@ -84,7 +86,7 @@ function create() {
   //==============resolve================
   let resolve = {
     root: [
-      path.join(__dirname, 'src'),
+      path.join(__dirname, 'app'),
       path.join(__dirname, 'node_modules')
     ],
     extensions: ['', '.jsx', '.js']
@@ -95,7 +97,8 @@ function create() {
   }
 
   let plugins = [
-    new LodashModuleReplacementPlugin
+    new LodashModuleReplacementPlugin,
+    new WriteFilePlugin()
   ];
 
   if (appConfig.providePlugin) {
@@ -115,11 +118,11 @@ function create() {
     _.each(appConfig.commonChunks, (commonChunk, name) => {
       plugins.push(new CommonsChunkPlugin({
         name: name,
-        filename: name + '.[hash].js',
+        filename: name + '.js',
         chunks: _.isEmpty(commonChunk) ? Infinity: commonChunk
       }));
     });
-    plugins.push(new ExtractTextPlugin('[name].[hash].styles.css'));
+    plugins.push(new ExtractTextPlugin('[name].styles.css'));
     plugins.push(new AssetsPlugin());
     plugins.push(new webpack.optimize.OccurrenceOrderPlugin);
     plugins.push(new webpack.optimize.UglifyJsPlugin);
@@ -153,9 +156,13 @@ function create() {
         test: /\.(jpg|gif)$/,
         loader: 'url?limit=1024'
       },
+      // {
+      //   test: /\.png$/,
+      //   loaders: ['url?mimetype=image/png!./file.png']
+      // },
       {
         test: /\.png$/,
-        loaders: ['url?limit=1024!mimetype=image/png!./file.png']
+        loader: 'file-loader?name=[path][name].[ext]'
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -163,7 +170,15 @@ function create() {
       },
       {
         test: /\.(ttf|eot|svg|swf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file'
+        loader: 'file-loader'
+      },
+      {
+        test: /\.json$/,
+        loader: 'file-loader?name=[name].[ext]'
+      },
+      {
+        test: /_locales(.*)\.json$/,
+        loader: 'file-loader?name=[path][name].[ext]'
       },
       {
         test: /\.jsx?$/,
