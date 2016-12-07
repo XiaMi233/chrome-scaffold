@@ -1,0 +1,25 @@
+{
+  "name": "tt-wacther",
+  "version": "1.0.0",
+  "description": "Chrome extension to detect tt",
+  "main": "index.js",
+  "scripts": {
+    "test": "server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kandamashiro/tt-watchter.git"
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "react",
+    "bilibili"
+  ],
+  "author": "XiaMi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kandamashiro/tt-watchter/issues"
+  },
+  "homepage": "https://github.com/kandamashiro/tt-watchter#readme"
+}
