@@ -4,5 +4,3 @@ www
 .idea
 webpack-assets.json
 *.log
-build
-build/*

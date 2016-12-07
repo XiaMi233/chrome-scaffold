@@ -16,7 +16,7 @@ let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
 let appConfig = {
   entry: {
-    'main': {
+    'app': {
       entry: ['./app/index']
     }
   },
@@ -26,7 +26,7 @@ let appConfig = {
   entries: {
     index: {
       title: 'test',
-      template: './app/entry/index.html',
+      template: './entry/index.html',
       // chunks: ['base', 'main', 'common']
     }
   },
@@ -70,14 +70,15 @@ function create() {
 
   if (process.env.NODE_ENV === "development") {
 
-    output.publicPath = 'http://localhost:' + appConfig.port + appConfig.output.publicPath;
+    output.publicPath = appConfig.output.publicPath;
+    // output.publicPath = 'http://localhost:' + appConfig.port + appConfig.output.publicPath;
     output.filename = '[name].bundle.js';
     output.chunkFilename = '[name].bundle.js';
   } else {
     //临时解决绝对路径在线上无法找到css中下级资源的问题
     output.publicPath = '.' + appConfig.output.publicPath;
-    output.filename = '[name].[hash].bundle.js';
-    output.chunkFilename = '[name].[chunkhash].bundle.js';
+    output.filename = '[name].bundle.js';
+    output.chunkFilename = '[name].bundle.js';
   }
 
   //==============resolve================

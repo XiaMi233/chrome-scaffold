@@ -8,6 +8,7 @@ new WebpackDevServer(webpack(webpackConfig), {
   publicPath: webpackConfig.output.publicPath,
   hot: true,
   historyApiFallback: true,
+  contentBase: 'build/',
   proxy: [
     {
       path: '*.json',
