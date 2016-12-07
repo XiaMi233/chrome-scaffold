@@ -31,7 +31,7 @@ let appConfig = {
     }
   },
   output: {
-    path: 'main',
+    path: '',
     publicPath: '/'
   },
   resolve: {
@@ -47,7 +47,7 @@ let appConfig = {
 
 function create() {
   //==============entry================
-  let entry = _.reduce(appConfig.entry, function(entries, entryInfo, entryName) {
+  let entry = _.reduce(appConfig.entry, (entries, entryInfo, entryName) => {
     let entry = entryInfo.entry;
     if (process.env.NODE_ENV === "development") {
       entry = [
@@ -65,7 +65,7 @@ function create() {
   let output;
 
   output = {
-    path: path.join(__dirname, 'dist/' + appConfig.output.path)
+    path: path.join(__dirname, 'www/' + appConfig.output.path)
   };
 
   if (process.env.NODE_ENV === "development") {
@@ -86,7 +86,7 @@ function create() {
       path.join(__dirname, 'src'),
       path.join(__dirname, 'node_modules')
     ],
-    extensions: ['', '.jsx', '.js', '.scss']
+    extensions: ['', '.jsx', '.js']
   };
 
   if (appConfig.resolve) {
@@ -102,7 +102,7 @@ function create() {
   }
 
   if (process.env.NODE_ENV === "development") {
-    _.each(appConfig.commonChunks, function(commonChunk, name) {
+    _.each(appConfig.commonChunks, (commonChunk, name) => {
       plugins.push(new CommonsChunkPlugin({
         name: name,
         filename: name + '.js',
@@ -111,7 +111,7 @@ function create() {
     });
     plugins.push(new webpack.HotModuleReplacementPlugin());
   } else {
-    _.each(appConfig.commonChunks, function(commonChunk, name) {
+    _.each(appConfig.commonChunks, (commonChunk, name) => {
       plugins.push(new CommonsChunkPlugin({
         name: name,
         filename: name + '.[hash].js',
@@ -124,7 +124,7 @@ function create() {
     plugins.push(new webpack.optimize.UglifyJsPlugin);
   }
 
-  _.each(appConfig.entries, function(entryInfo, entryName) {
+  _.each(appConfig.entries, (entryInfo, entryName) => {
     plugins.push(new HtmlWebpackPlugin({
       title: entryInfo.title,
       filename: entryName + '.html',
@@ -163,17 +163,16 @@ function create() {
       {
         test: /\.(ttf|eot|svg|swf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'file'
+      },
+      {
+        test: /\.jsx?$/,
+        loaders: ['babel'],
+        include: [path.join(__dirname, 'app')]
       }
     ]
   };
 
   if (process.env.NODE_ENV === "development") {
-    module.loaders.push({
-      test: /\.jsx?$/,
-      loaders: ['babel'],
-      include: [path.join(__dirname, 'app')]
-    });
-
     module.loaders.push({
       test: /\.css$/,
       loaders: ['css', 'postcss']
