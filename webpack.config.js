@@ -67,7 +67,8 @@ function create() {
   let output;
 
   output = {
-    path: path.join(__dirname, 'www/' + appConfig.output.path)
+    path: path.join(__dirname, 'www/' + appConfig.output.path),
+    // devtoolModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
   };
 
   if (process.env.NODE_ENV === "development") {
@@ -201,7 +202,7 @@ function create() {
   }
 
   return {
-    devtool: process.env.NODE_ENV === "development" ? "eval" : false,
+    devtool: process.env.NODE_ENV === "development" ? "#inline-source-map" : false,
     entry: entry,
     output: output,
     debug: process.env.NODE_ENV === "development",
