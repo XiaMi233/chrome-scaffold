@@ -43,7 +43,7 @@ let appConfig = {
   },
   providePlugin: {
   },
-  // noParse: //
+  noParse: /react/
 };
 
 function create() {
@@ -207,7 +207,7 @@ function create() {
         ]
       }
     ],
-    // noParse: appConfig.noParse
+    noParse: appConfig.noParse
   };
 
   if (process.env.NODE_ENV === "development") {
