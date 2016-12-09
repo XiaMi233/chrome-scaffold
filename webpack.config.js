@@ -53,8 +53,9 @@ function create() {
     let entry = entryInfo.entry;
     if (process.env.NODE_ENV === "development") {
       entry = [
-        // 'react-hot-loader/patch',
-        // 'webpack-dev-server/client'
+        'webpack-dev-server/client?http://localhost:3000',
+        'webpack/hot/only-dev-server',
+        'react-hot-loader/patch'
       ].concat(entry);
     }
 

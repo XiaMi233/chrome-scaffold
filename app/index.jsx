@@ -11,36 +11,11 @@ import { AppContainer } from 'react-hot-loader';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {createStore} from 'redux'
-import {Provider, connect} from 'react-redux';
-import App from './app';
-
-const rootEl = document.getElementById('app');
-// ReactDOM.render(
-//   <AppContainer>
-//     <App />
-//   </AppContainer>,
-//   rootEl
-// );
-//
-// if (module.hot) {
-//   module.hot.accept('./app', () => {
-//     // If you use Webpack 2 in ES modules mode, you can
-//     // use <App /> here rather than require() a <NextApp />.
-//     const NextApp = require('./app').default;
-//     ReactDOM.render(
-//       <AppContainer>
-//         <NextApp />
-//       </AppContainer>,
-//       rootEl
-//     );
-//   });
-// }
-
+import {Provider} from 'react-redux';
+import App from 'components/App';
 import {throttle} from 'lodash';
-
-import TodoApp from 'compontents/App';
-import todoApp from 'reducers/index';
 import {loadState, saveState} from 'localStorage';
+import todoApp from 'reducers/index';
 
 const persistedState = loadState();
 
@@ -58,9 +33,31 @@ store.subscribe(() =>
   console.log(store.getState())
 );
 
+const rootEl = document.getElementById('app');
+
 ReactDOM.render(
-  <Provider store={store}>
-    <TodoApp />
-  </Provider>,
+  <AppContainer>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </AppContainer>,
   rootEl
 );
+
+if (module.hot) {
+  module.hot.accept('components/App', () => {
+    // If you use Webpack 2 in ES modules mode, you can
+    // use <App /> here rather than require() a <NextApp />.
+    const NextApp = require('components/App').default;
+
+    ReactDOM.render(
+      <AppContainer>
+        <Provider store={store}>
+          <NextApp />
+        </Provider>
+      </AppContainer>,
+      rootEl
+    );
+  });
+}
+
