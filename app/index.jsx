@@ -10,6 +10,7 @@ import 'images/icon48.png'
 import { AppContainer } from 'react-hot-loader';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
+import {Provider, connect} from 'react-redux';
 import App from './app';
 
 const rootEl = document.getElementById('app');
@@ -102,9 +103,50 @@ const todoApp = combineReducers({
   visibilityFilter
 });
 
-const store = createStore(todoApp);
-
 let nextTodoId = 0;
+
+const addTodo = (text) => ({
+  type: 'ADD_TODO',
+  id: nextTodoId++,
+  text
+});
+
+const setVisibilityFilter = (filter) => ({
+  type: 'SET_VISIBILITY_FILTER',
+  filter
+});
+
+const toggleTodo = (id) => ({
+  type: 'TOGGLE_TODO',
+  id
+});
+
+
+let AddTodo = ({
+  dispatch
+}) => {
+  let input;
+  return (
+    <div>
+      <input type="text" ref={node => {
+        input = node;
+      }} />
+      <button
+        type="submit"
+        onClick={() => {
+          if (input.value) {
+            dispatch(addTodo(input.value));
+          }
+          input.value = '';
+        }}
+      >
+        addTodo
+      </button>
+    </div>
+  );
+};
+
+AddTodo = connect()(AddTodo);
 
 const Link = ({
   active,
@@ -123,39 +165,32 @@ const Link = ({
     >
       {children}
     </a>
-
   );
 };
 
-class FilterLink extends Component {
-  componentDidMount() {
-    this.unsubscribe = store.subscribe(() =>
-      this.forceUpdate()
-    );
+const mapStateToLinkProps = (
+  state,
+  ownProps
+) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter
   }
-
-  componentWillUnmount() {
-    this.unsubscribe();
+};
+const mapDispatchToLinkProps = (
+  dispatch,
+  ownProps
+) => {
+  return {
+    onClick: () =>
+      dispatch(
+        setVisibilityFilter(ownProps.filter)
+      )
   }
-
-  render() {
-    const props = this.props;
-    const state = store.getState();
-
-    return (
-      <Link
-        active={props.filter === state.visibilityFilter}
-        onClick={() =>
-          store.dispatch({
-            type: 'SET_VISIBILITY_FILTER',
-            filter: props.filter
-          })}
-      >
-        {props.children}
-      </Link>
-    );
-  }
-}
+};
+const FilterLink = connect(
+  mapStateToLinkProps,
+  mapDispatchToLinkProps
+)(Link);
 
 const getVisibleTodos = (
   todos,
@@ -171,10 +206,7 @@ const getVisibleTodos = (
   }
 };
 
-const Footer = ({
-  visibilityFilter,
-  onFilterClick
-}) => (
+const Footer = () => (
   <p>
     Show:
     {' '}
@@ -229,65 +261,25 @@ const TodoList = ({
   </ul>
 );
 
-class VisibleTodoList extends Component {
-  componentDidMount() {
-    this.unsubscribe = store.subscribe(() =>
-      this.forceUpdate()
-    );
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-
-  render() {
-    const props = this.props;
-    const state = store.getState();
-
-    return (
-      <TodoList
-        todos={
-          getVisibleTodos(
-            state.todos,
-            state.visibilityFilter
-          )
-        }
-        onTodoClick={id =>
-          store.dispatch({
-            type: 'TOGGLE_TODO',
-            id
-          })
-        }
-      />
-    );
-  }
-}
-
-const AddTodo = () => {
-  let input;
-  return (
-    <div>
-      <input type="text" ref={node => {
-        input = node;
-      }} />
-      <button
-        type="submit"
-        onClick={() => {
-          if (input.value) {
-            store.dispatch({
-              type: 'ADD_TODO',
-              id: nextTodoId++,
-              text: input.value
-            });
-          }
-          input.value = '';
-        }}
-      >
-        addTodo
-      </button>
-    </div>
-  );
+const mapStateToTodoListProps = (state) => {
+  return {
+    todos: getVisibleTodos(
+      state.todos,
+      state.visibilityFilter
+    )
+  };
 };
+const mapDispatchToTodoListProps = (dispatch) => {
+  return {
+    onTodoClick: id =>
+      dispatch(toggleTodo(id))
+  };
+};
+const VisibleTodoList = connect(
+  mapStateToTodoListProps,
+  mapDispatchToTodoListProps
+)(TodoList);
+
 const TodoApp = () => (
   <form action="javascript:void(0)">
     <AddTodo />
@@ -297,6 +289,8 @@ const TodoApp = () => (
 );
 
 ReactDOM.render(
-  <TodoApp />,
+  <Provider store={createStore(todoApp)}>
+    <TodoApp />
+  </Provider>,
   rootEl
 );
