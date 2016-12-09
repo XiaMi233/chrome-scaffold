@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import webpackConfig from '../webpack.config'
+import webpackConfig from '../webpack.config';
+import {port} from '../port.config';
 
 let proxyTarget = 'http://bilibili.com';
 
@@ -36,10 +37,10 @@ new WebpackDevServer(webpack(webpackConfig), {
     cachedAssets: true,
     assets: false
   }
-}).listen(webpackConfig.port, function(err, result) {
+}).listen(port, function(err, result) {
   if(err) {
     console.log(err);
   }
 
-  console.log(`Listening at localhost:${webpackConfig.port}`);
+  console.log(`Listening at localhost:${port}`);
 });

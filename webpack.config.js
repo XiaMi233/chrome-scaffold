@@ -11,6 +11,7 @@ import AssetsPlugin from 'assets-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import WriteFilePlugin from 'write-file-webpack-plugin'
+import {port} from './port.config';
 
 
 let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
@@ -42,9 +43,7 @@ let appConfig = {
   },
   providePlugin: {
   },
-  noParse: [
-  ],
-  port: 3000
+  // noParse: //
 };
 
 function create() {
@@ -53,7 +52,7 @@ function create() {
     let entry = entryInfo.entry;
     if (process.env.NODE_ENV === "development") {
       entry = [
-        `webpack-dev-server/client?http://localhost:${appConfig.port}`,
+        `webpack-dev-server/client?http://localhost:${port}`,
         'webpack/hot/only-dev-server',
         'react-hot-loader/patch'
       ].concat(entry);
@@ -87,12 +86,12 @@ function create() {
 
   //==============resolve================
   let resolve = {
-    root: [
+    modules: [
       path.join(__dirname, 'app'),
       path.join(__dirname, 'local_modules'),
       path.join(__dirname, 'node_modules')
     ],
-    extensions: ['', '.jsx', '.js']
+    extensions: ['.js', '.jsx']
   };
 
   if (appConfig.resolve) {
@@ -105,6 +104,23 @@ function create() {
     new webpack.ProvidePlugin({
       "React": "react",
     }),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        postcss: function () {
+          return {
+            defaults: [
+              unrgba({
+                method: 'clone'
+              }),
+              gradient,
+              opacity,
+              autoprefixer({browsers: ['Chrome > 30','ie >= 8','> 1%']})
+            ]
+          };
+        }
+      },
+    })
   ];
 
   if (appConfig.providePlugin) {
@@ -160,41 +176,38 @@ function create() {
     loaders: [
       {
         test: /\.(jpg|gif)$/,
-        loader: 'url?limit=1024'
+        use: ['url-loader?limit=1024']
       },
-      // {
-      //   test: /\.png$/,
-      //   loaders: ['url?mimetype=image/png!./file.png']
-      // },
       {
         test: /\.png$/,
-        loader: 'file-loader?name=[path][name].[ext]'
+        use: ['file-loader?name=[path][name].[ext]']
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url?limit=10000&minetype=application/font-woff'
+        use: ['url-loader?limit=10000&minetype=application/font-woff']
       },
       {
         test: /\.(ttf|eot|svg|swf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader'
+        use: ['file-loader']
       },
       {
         test: /\.json$/,
-        loader: 'file-loader?name=[name].[ext]'
+        use: ['file-loader?name=[name].[ext]']
       },
       {
         test: /_locales(.*)\.json$/,
-        loader: 'file-loader?name=[path][name].[ext]'
+        use: ['file-loader?name=[path][name].[ext]']
       },
       {
         test: /\.jsx?$/,
-        loaders: ['babel'],
+        use: ['babel-loader'],
         include: [
           path.join(__dirname, 'app'),
           path.join(__dirname, 'local_modules')
         ]
       }
-    ]
+    ],
+    // noParse: appConfig.noParse
   };
 
   if (process.env.NODE_ENV === "development") {
@@ -205,7 +218,10 @@ function create() {
   } else {
     module.loaders.push({
       test: /\.css$/,
-      loader: ExtractTextPlugin.extract('style','css!postcss')
+      loader: ExtractTextPlugin.extract({
+        fallbackLoader: 'style-loader',
+        loader: 'css!postcss'
+      })
     });
   }
 
@@ -213,26 +229,11 @@ function create() {
     devtool: process.env.NODE_ENV === "development" ? "#inline-source-map" : false,
     entry: entry,
     output: output,
-    debug: process.env.NODE_ENV === "development",
     externals: {
     },
     resolve: resolve || {},
-    noParse: appConfig.noParse || {},
     plugins: plugins,
-    module: module,
-    postcss: function () {
-      return {
-        defaults: [
-          unrgba({
-            method: 'clone'
-          }),
-          gradient,
-          opacity,
-          autoprefixer({browsers: ['Chrome > 30','ie >= 8','> 1%']})
-        ]
-      };
-    },
-    port: appConfig.port
+    module: module
   };
 }
 

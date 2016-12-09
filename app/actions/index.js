@@ -1,4 +1,4 @@
-import {v4} from 'node-uuid';
+import {v4} from 'uuid';
 
 export const addTodo = (text) => ({
   type: 'ADD_TODO',
