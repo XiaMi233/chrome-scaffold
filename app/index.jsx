@@ -1,38 +1,12 @@
-import '../manifest.json'
-import 'locales/en/messages.json'
-import 'locales/zh_CN/messages.json'
-import 'locales/zh_TW/messages.json'
-import 'images/icon16.png'
-import 'images/icon24.png'
-import 'images/icon32.png'
-import 'images/icon48.png'
-
 import { AppContainer } from 'react-hot-loader';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import {createStore} from 'redux'
 import {Provider} from 'react-redux';
 import App from 'components/App';
-import {throttle} from 'lodash';
-import {loadState, saveState} from 'localStorage';
-import todoApp from 'reducers/index';
+import configureStore from 'configureStore';
+import 'configureChromeExtension';
 
-const persistedState = loadState();
-
-const store = createStore(
-  todoApp,
-  persistedState
-);
-
-store.subscribe(throttle(() => {
-  saveState({
-    todos: store.getState().todos
-  });
-}, 1000));
-store.subscribe(() =>
-  console.log(store.getState())
-);
-
+const store = configureStore();
 const rootEl = document.getElementById('app');
 
 ReactDOM.render(
@@ -60,4 +34,3 @@ if (module.hot) {
     );
   });
 }
-

@@ -1,0 +1,8 @@
+import '../manifest.json'
+import 'locales/en/messages.json'
+import 'locales/zh_CN/messages.json'
+import 'locales/zh_TW/messages.json'
+import 'images/icon16.png'
+import 'images/icon24.png'
+import 'images/icon32.png'
+import 'images/icon48.png'
