@@ -88,6 +88,7 @@ function create() {
   let resolve = {
     root: [
       path.join(__dirname, 'app'),
+      path.join(__dirname, 'local_modules'),
       path.join(__dirname, 'node_modules')
     ],
     extensions: ['', '.jsx', '.js']
@@ -99,7 +100,10 @@ function create() {
 
   let plugins = [
     new LodashModuleReplacementPlugin,
-    new WriteFilePlugin()
+    new WriteFilePlugin(),
+    new webpack.ProvidePlugin({
+      "React": "react",
+    }),
   ];
 
   if (appConfig.providePlugin) {
@@ -184,7 +188,10 @@ function create() {
       {
         test: /\.jsx?$/,
         loaders: ['babel'],
-        include: [path.join(__dirname, 'app')]
+        include: [
+          path.join(__dirname, 'app'),
+          path.join(__dirname, 'local_modules')
+        ]
       }
     ]
   };
