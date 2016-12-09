@@ -42,8 +42,7 @@ let appConfig = {
     }
   },
   providePlugin: {
-  },
-  noParse: /react/
+  }
 };
 
 function create() {
@@ -206,8 +205,7 @@ function create() {
           path.join(__dirname, 'local_modules')
         ]
       }
-    ],
-    noParse: appConfig.noParse
+    ]
   };
 
   if (process.env.NODE_ENV === "development") {
