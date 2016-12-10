@@ -2,12 +2,10 @@ import AddTodo from './AddTodo';
 import VisibleTodoList from './VisibleTodoList';
 import Footer from './Footer';
 
-const TodoApp = ({ params }) => (
+const TodoApp = () => (
   <form action="javascript:void(0)">
     <AddTodo />
-    <VisibleTodoList
-      filter={params.filter || 'all'}
-    />
+    <VisibleTodoList />
     <Footer />
   </form>
 );

@@ -38,6 +38,7 @@ let appConfig = {
   },
   resolve: {
     alias: {
+      'reducers': './reducers',
       'locales': '../_locales'
     }
   },
@@ -106,6 +107,11 @@ function create() {
     new webpack.ProvidePlugin({
       "React": "react",
     }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+      }
+    }),
     new webpack.LoaderOptionsPlugin({
       options: {
         context: __dirname,
@@ -157,7 +163,7 @@ function create() {
   _.each(appConfig.entries, (entryInfo, entryName) => {
     plugins.push(new HtmlWebpackPlugin({
       title: entryInfo.title,
-      filename: entryName + '.html',
+      filename: entryName,
       template: entryInfo.template,
       chunks: entryInfo.chunks,
       inject: 'body',

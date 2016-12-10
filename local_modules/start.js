@@ -20,7 +20,16 @@ app.use(devMiddleware(compiler, {
 app.use(hotMiddleware(compiler));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve('www', 'popup.html'));
+  res.format({
+    'text/html': function(){
+      res.sendFile(path.resolve('www', 'popup.html'));
+    }
+  });
+  // res.sendFile(path.resolve('www', 'popup.html'), {
+  //   headers: {
+  //     'Content-Type': 'text/html; charset=UTF-8'
+  //   }
+  // });
 });
 
 app.listen(port, error => {
