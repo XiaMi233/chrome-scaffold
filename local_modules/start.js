@@ -20,7 +20,7 @@ app.use(devMiddleware(compiler, {
 app.use(hotMiddleware(compiler));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve('www', 'index.html'));
+  res.sendFile(path.resolve('www', 'popup.html'));
 });
 
 app.listen(port, error => {

@@ -1,19 +1,19 @@
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
-import { Router, Route, browserHistory } from 'react-router';
-// import { createHistory } from 'history'
-
+import { Router, useRouterHistory } from 'react-router';
 import App from './App';
+import { createHistory } from 'history'
 
-// const history = useRouterHistory(createHistory)({
-//   basename: '/popup.html'
-// });
+const history = useRouterHistory(createHistory)({
+  basename: '/popup.html'
+});
 
-const Root = ({store}) => (
+
+const Root = ({store, routes}) => (
   <AppContainer>
     <Provider store={store}>
-      <Router history={browserHistory}>
-        <Route path="/(:filter)" component={App} />
+      <Router history={history}>
+        {routes(App)}
       </Router>
     </Provider>
   </AppContainer>

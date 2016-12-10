@@ -26,7 +26,7 @@ let appConfig = {
     'common': []
   },
   entries: {
-    index: {
+    popup: {
       title: 'test',
       template: './entry/index.html',
       chunks: ['index', 'common']
@@ -55,8 +55,9 @@ function create() {
         // 'webpack/hot/only-dev-server',
         // 'react-hot-loader/patch'
         'react-hot-loader/patch',
-        'webpack-hot-middleware/client'
-      ].concat(entry);
+        `webpack-hot-middleware/client?http://localhost:${port}`,
+        ...entry
+      ];
     }
 
     entries[entryName] = entry;
