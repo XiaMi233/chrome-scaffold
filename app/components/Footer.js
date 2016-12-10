@@ -2,23 +2,19 @@ import FilterLink from './FilterLink';
 
 const Footer = () => (
   <p>
-    Show:
+    Show:1
     {' '}
-    <FilterLink
-      filter="SHOW_ALL"
-    >
+    <FilterLink filter="all">
       All
     </FilterLink>
-    {' '}
+    {', '}
     <FilterLink
-      filter="SHOW_ACTIVE"
+      filter="active"
     >
       Active
     </FilterLink>
-    {' '}
-    <FilterLink
-      filter="SHOW_COMPLETED"
-    >
+    {', '}
+    <FilterLink filter="completed">
       Completed
     </FilterLink>
   </p>

@@ -26,7 +26,7 @@ let appConfig = {
     'common': []
   },
   entries: {
-    popup: {
+    index: {
       title: 'test',
       template: './entry/index.html',
       chunks: ['index', 'common']
@@ -51,9 +51,11 @@ function create() {
     let entry = entryInfo.entry;
     if (process.env.NODE_ENV === "development") {
       entry = [
-        `webpack-dev-server/client?http://localhost:${port}`,
-        'webpack/hot/only-dev-server',
-        'react-hot-loader/patch'
+        // `webpack-dev-server/client?http://localhost:${port}`,
+        // 'webpack/hot/only-dev-server',
+        // 'react-hot-loader/patch'
+        'react-hot-loader/patch',
+        'webpack-hot-middleware/client'
       ].concat(entry);
     }
 
@@ -134,7 +136,9 @@ function create() {
         chunks: _.isEmpty(commonChunk) ? Infinity: commonChunk
       }));
     });
+    plugins.push(new webpack.optimize.OccurrenceOrderPlugin);
     plugins.push(new webpack.HotModuleReplacementPlugin());
+    plugins.push(new webpack.NoErrorsPlugin());
   } else {
     _.each(appConfig.commonChunks, (commonChunk, name) => {
       plugins.push(new CommonsChunkPlugin({

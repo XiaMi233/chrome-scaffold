@@ -15,7 +15,7 @@
       "32": "app/images/icon32.png"
     },
     "default_title": "Google Mail",
-    "default_popup": "popup.html"
+    "default_popup": "index.html"
   },
   "permissions": [
     "http://*/*",

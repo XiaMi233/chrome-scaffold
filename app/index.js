@@ -13,7 +13,7 @@ ReactDOM.render(
 
 if (module.hot) {
   module.hot.accept('components/Root', () => {
-    const Root = require('components/Root');
+    const Root = require('components/Root').default;
 
     ReactDOM.render(
       <Root store={store} />,
