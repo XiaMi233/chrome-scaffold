@@ -1,7 +1,7 @@
 {
   "name": "tt-wacther",
   "version": "1.0.0",
-  "description": "Chrome extension to detect tt",
+  "description": "Chrome extension's chrome-scaffold",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development babel-node %NODE_DEBUG_OPTION% -e \"require('./local_modules/start')\"",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/kandamashiro/tt-watchter.git"
+    "url": "git://github.com/kandamashiro/chrome-scaffold.git"
   },
   "keywords": [
     "chrome",
@@ -20,9 +20,9 @@
   "author": "XiaMi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kandamashiro/tt-watcher/issues"
+    "url": "https://github.com/kandamashiro/chrome-scaffold/issues"
   },
-  "homepage": "https://github.com/kandamashiro/tt-watcher#readme",
+  "homepage": "https://github.com/kandamashiro/chrome-scaffold#readme",
   "dependencies": {
     "lodash": "^4.17.2",
     "react": "^15.4.1",
