@@ -1,2 +1,2 @@
-# tt-watchter
-Chrome extension to detect tt
+# chrome-scaffold
+Chrome extension's scaffold
